@@ -90,7 +90,7 @@
                 document.getElementById("previous-guesses").innerText = previousGuesses.join(", ");
             }
 
-            const remainingAttempts = 10 - guessCount;
+            const remainingAttempts = 15 - guessCount;
             document.getElementById("remaining-attempts").innerText = "Remaining attempts: " + remainingAttempts;
 
             if (remainingAttempts === 0) {
