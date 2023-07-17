@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wordle Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #F7F7F7;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #FFFFFF;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333333;
+            margin-top: 0;
+        }
+        .word-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .word-letter {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333333;
+            margin: 0 5px;
+        }
+        .guess-input {
+            width: 100%;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            outline: none;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #3366CC;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .result-message {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 20px;
+            color: #333333;
+        }
+        .previous-guesses {
+            text-align: center;
+            font-size: 14px;
+            color: #666666;
+            margin-top: 20px;
+        }
+        .previous-guess {
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .restart-button {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #FF4444;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .restart-button:hover {
+            background-color: #FF6666;
+        }
+        .correct-letter {
+            color: green;
+        }
+        .wrong-letter {
+            color: red;
+        }
+        .hidden-letter {
+            color: #999999;
+        }
+        .attempts-counter {
+            text-align: center;
+            font-size: 16px;
+            color: #666666;
+            margin-bottom: 10px;
+        }
+        .remaining-attempts {
+            text-align: center;
+            font-size: 14px;
+            color: #666666;
+        }
+        .answer-container {
+            text-align: center;
+            font-size: 16px;
+            color: #666666;
+            margin-top: 20px;
+        }
+        .show-answer-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #FFFFFF;
+            background-color: #666666;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .show-answer-button:hover {
+            background-color: #999999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wordle Game</h1>
+        <div class="attempts-counter" id="attempts-counter">Attempts: 0</div>
+        <div class="word-container" id="word-container"></div>
+        <input type="text" class="guess-input" id="guess-input" maxlength="5" oninput="enableCheckButton()" placeholder="Enter your guess...">
+        <div class="button-container">
+            <button class="button" id="guess-button" onclick="checkGuess()" disabled>Check</button>
+        </div>
+        <p class="result-message" id="result-message"></p>
+        <div class="previous-guesses">
+            Previous guesses: <span id="previous-guesses"></span>
+        </div>
+        <div class="remaining-attempts" id="remaining-attempts"></div>
+        <div class="answer-container" id="answer-container"></div>
+        <button class="restart-button" onclick="restartGame()">Restart Game</button>
+    </div>
+
+    <script>
+        const words = ['apple', 'table', 'chair', 'light', 'toast', 'robot', 'house', 'clock', 'piano', 'train', 'snake', 'mouse', 'phone', 'paper', 'ruler', 'brave', 'dream', 'flash', 'green', 'blues', 'image', 'jolly', 'kings', 'laser', 'magic', 'novel', 'ocean', 'panda', 'queen', 'radio', 'sunny', 'tiger', 'unity', 'vivid', 'water', 'xenon', 'youth', 'zebra', 'mango', 'peach', 'grape', 'melon', 'olive', 'lemon', 'kiwi', 'pears', 'plums', 'alarm', 'beach', 'cycle', 'horse', 'jelly', 'candy', 'magic','fairy','ocean','pizza','sunny','loyal','amber','pilot','witty','birdy','mouse','plant','catch','batch','stank','stunk','melon','cloud','trees','elite','weeds','wheel','magma','coral','flame','scoot','scoop','llama','fuzzy','lives','munch','roast','glaze','bliss','karma','oasis','boxes','stone','cramp','stamp','stink','grand','toast','skyra','chips','heads'];
+
+        function getRandomWord() {
+            const fiveLetterWords = words.filter(word => word.length === 5);
+            return fiveLetterWords[Math.floor(Math.random() * fiveLetterWords.length)];
+        }
+
+        function createHiddenWord() {
+            const wordContainer = document.getElementById("word-container");
+            for (let i = 0; i < 5; i++) {
+                const span = document.createElement("span");
+                span.innerText = "_";
+                span.className = "word-letter";
+                wordContainer.appendChild(span);
+            }
+        }
+
+        function enableCheckButton() {
+            const guessInput = document.getElementById("guess-input");
+            const guessButton = document.getElementById("guess-button");
+            guessButton.disabled = guessInput.value.length === 0;
+        }
+
+        function checkGuess() {
+            const guessInput = document.getElementById("guess-input");
+            const guess = guessInput.value.toLowerCase();
+            guessInput.value = "";
+
+            if (guess.length !== 5) {
+                alert("Please enter a word with 5 letters.");
+                return;
+            }
+
+            let isGuessCorrect = true;
+            let correctLetters = [];
+
+            for (let i = 0; i < 5; i++) {
+                const span = document.getElementById("word-container").children[i];
+
+                if (word.includes(guess[i])) {
+                    if (word[i] === guess[i]) {
+                        span.innerText = guess[i];
+                        span.classList.add("correct-letter");
+                        correctLetters.push(guess[i]);
+                    } else {
+                        span.classList.add("wrong-letter");
+                        isGuessCorrect = false;
+                    }
+                } else {
+                    span.classList.add("hidden-letter");
+                    isGuessCorrect = false;
+                }
+            }
+
+            guessCount++;
+
+            if (isGuessCorrect) {
+                document.getElementById("result-message").innerText = "Congratulations! You guessed the word in " + guessCount + " attempt(s).";
+                document.getElementById("guess-input").disabled = true;
+                document.getElementById("guess-button").disabled = true;
+            } else {
+                const message = isGuessCorrect ? "Correct guess!" : "Wrong guess. You got " + correctLetters.length + " letter(s) correct.";
+                document.getElementById("result-message").innerText = message;
+                previousGuesses.push(guess);
+                document.getElementById("previous-guesses").innerText = previousGuesses.join(", ");
+            }
+
+            const remainingAttempts = 10 - guessCount;
+            document.getElementById("remaining-attempts").innerText = "Remaining attempts: " + remainingAttempts;
+
+            if (remainingAttempts === 0) {
+                document.getElementById("answer-container").innerText = "The word was: " + word;
+                showAnswerButton.disabled = true;
+            }
+        }
+
+        function restartGame() {
+            const wordContainer = document.getElementById("word-container");
+            const guessInput = document.getElementById("guess-input");
+            const guessButton = document.getElementById("guess-button");
+            const resultMessage = document.getElementById("result-message");
+            const previousGuessesContainer = document.getElementById("previous-guesses");
+            const remainingAttemptsContainer = document.getElementById("remaining-attempts");
+            const answerContainer = document.getElementById("answer-container");
+
+            wordContainer.innerHTML = "";
+            guessInput.value = "";
+            guessInput.disabled = false;
+            guessButton.disabled = true;
+            resultMessage.innerText = "";
+            previousGuesses = [];
+            previousGuessesContainer.innerText = "";
+            remainingAttemptsContainer.innerText = "";
+            answerContainer.innerText = "";
+
+            word = getRandomWord();
+            guessCount = 0;
+            createHiddenWord();
+
+            document.getElementById("attempts-counter").innerText = "Attempts: 0";
+            showAnswerButton.disabled = false;
+        }
+
+        let word;
+        let guessCount = 0;
+        let previousGuesses = [];
+
+        word = getRandomWord();
+        createHiddenWord();
+    </script>
+</body>
+</html>
