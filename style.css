@@ -86,7 +86,7 @@
             background-color: #FF6666;
         }
         .correct-letter {
-            color: green;
+            color: #008000;
         }
         .wrong-letter {
             color: red;
