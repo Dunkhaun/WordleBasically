@@ -2,11 +2,11 @@
 <html>
 <head>
     <title>BasicallyWordle</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="style.scss">
 </head>
 <body>
     <div class="container">
-        <h1>WordleBasically</h1>
+        <h1>Wordle Game</h1>
         <div class="attempts-counter" id="attempts-counter">Attempts: 0</div>
         <div class="word-container" id="word-container"></div>
         <input type="text" class="guess-input" id="guess-input" maxlength="5" oninput="enableCheckButton()" placeholder="Enter your guess...">
@@ -23,7 +23,7 @@
     </div>
 
     <script>
-        const words = ['apple', 'table', 'chair', 'light', 'toast', 'robot', 'house', 'clock', 'piano', 'train', 'snake', 'mouse', 'phone', 'paper', 'ruler', 'brave', 'dream', 'flash', 'green', 'blues', 'image', 'jolly', 'kings', 'laser', 'magic', 'novel', 'ocean', 'panda', 'queen', 'radio', 'sunny', 'tiger', 'unity', 'vivid', 'water', 'xenon', 'youth', 'zebra', 'mango', 'peach', 'grape', 'melon', 'olive', 'lemon', 'kiwi', 'pears', 'plums', 'alarm', 'beach', 'cycle', 'horse', 'jelly', 'candy', 'magic','fairy','ocean','pizza','sunny','loyal','amber','pilot','witty','birdy','mouse','plant','catch','batch','stank','stunk','melon','cloud','trees','elite','weeds','wheel','magma','coral','flame','scoot','scoop','llama','fuzzy','lives','munch','roast','glaze','bliss','karma','oasis','boxes','stone','cramp','stamp','stink','grand','toast','skyra','chips','heads'];
+        const words = ['apple', 'table', 'chair', 'light', 'toast', 'robot', 'house', 'clock', 'piano', 'train', 'snake', 'mouse', 'phone', 'paper', 'ruler', 'brave', 'dream', 'flash', 'green', 'blues', 'image', 'jolly', 'kings', 'laser', 'magic', 'novel', 'ocean', 'panda', 'queen', 'radio', 'sunny', 'tiger', 'unity', 'vivid', 'water', 'xenon', 'youth', 'zebra', 'mango', 'peach', 'grape', 'melon', 'olive', 'lemon', 'kiwi', 'pears', 'plums', 'alarm', 'beach', 'cycle', 'horse', 'jelly', 'candy', 'magic','fairy','ocean','pizza','sunny','loyal','amber','pilot','witty','birdy','mouse','plant','catch','batch','stank','stunk','melon','cloud','trees','elite','weeds','wheel','magma','coral','flame','scoot','scoop','llama','fuzzy','lives','munch','roast','glaze','bliss','karma','oasis','boxes','stone','cramp','stamp','stink','grand','toast','skyra','chips','heads','fancy','blitz','zesty','gummy','nexus','ivory','smirk','blade','tango','quirk','onion','charm','shoes','rogue','chalk','disco','snack','blend','rumba','whack','rumba','spicy','spike','flora','thumb','thump','ultra','witty','trash','salsa','yodel','dusty','olive','niche','rival','silky','whack','shiny','tempo','quest','noise','orbit','peace','jewel','kneel','medal','acorn','rhyme','howdy','ghost','fluff','blush'];
 
         function getRandomWord() {
             const fiveLetterWords = words.filter(word => word.length === 5);
