@@ -1,1 +1,1 @@
-# WordleBassically
+# WordleBasically
